@@ -105,7 +105,7 @@ allowed-tools: Read Write Edit Grep Bash Task
 - 解析真实书项目根（book project_root）：必须包含 `.webnovel/state.json`。
 - 校验核心输入：`大纲/总纲.md`、`${CLAUDE_PLUGIN_ROOT}/scripts/extract_chapter_context.py` 存在。
 - 规范化变量：
-  - `WORKSPACE_ROOT`：Claude Code 打开的工作区根目录（可能是书项目的父目录，例如 `D:\wk\xiaoshuo`）
+  - `WORKSPACE_ROOT`：宿主环境打开的工作区根目录（可能是书项目的父目录，例如 `D:\wk\xiaoshuo`）
   - `PROJECT_ROOT`：真实书项目根目录（必须包含 `.webnovel/state.json`，例如 `D:\wk\xiaoshuo\凡人资本论`）
   - `SKILL_ROOT`：skill 所在目录（固定 `${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write`）
   - `SCRIPTS_DIR`：脚本目录（固定 `${CLAUDE_PLUGIN_ROOT}/scripts`）
@@ -114,7 +114,7 @@ allowed-tools: Read Write Edit Grep Bash Task
 
 环境设置（bash 命令执行前）：
 ```bash
-# WORKSPACE_ROOT：Claude Code 的工作区根（通常等于 $CLAUDE_PROJECT_DIR）
+# WORKSPACE_ROOT：宿主环境工作区根（通常等于 $CLAUDE_PROJECT_DIR）
 export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write" ]; then

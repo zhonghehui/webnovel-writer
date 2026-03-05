@@ -8,7 +8,7 @@ allowed-tools: Read Bash AskUserQuestion
 
 ## Project Root Guard（必须先确认）
 
-- Claude Code 的“工作区根目录”不一定等于“书项目根目录”。常见结构：工作区为 `D:\wk\xiaoshuo`，书项目为 `D:\wk\xiaoshuo\凡人资本论`。
+- 宿主环境的“工作区根目录”不一定等于“书项目根目录”。常见结构：工作区为 `D:\wk\xiaoshuo`，书项目为 `D:\wk\xiaoshuo\凡人资本论`。
 - 必须先解析真实书项目根（必须包含 `.webnovel/state.json`），后续所有读写路径都以该目录为准。
 
 环境设置（bash 命令执行前）：

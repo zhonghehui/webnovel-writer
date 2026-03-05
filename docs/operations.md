@@ -2,9 +2,9 @@
 
 ## 目录层级（真实运行）
 
-在 Claude Code + Marketplace 安装下，至少有 4 层概念：
+在插件宿主 + Marketplace 安装下，至少有 4 层概念：
 
-1. `WORKSPACE_ROOT`（Claude 工作区根，通常是 `${CLAUDE_PROJECT_DIR}`）
+1. `WORKSPACE_ROOT`（宿主工作区根，通常是 `${CLAUDE_PROJECT_DIR}`）
 2. `WORKSPACE_ROOT/.claude/`（工作区级指针与配置）
 3. `PROJECT_ROOT`（真实小说项目根，`/webnovel-init` 按书名创建）
 4. `CLAUDE_PLUGIN_ROOT`（插件缓存目录，不在项目内）
@@ -33,7 +33,7 @@ project-root/
 
 ## 插件目录（Marketplace 安装）
 
-插件不在小说项目目录内，而在 Claude 插件缓存目录。运行时统一用 `CLAUDE_PLUGIN_ROOT` 引用：
+插件不在小说项目目录内，而在插件缓存目录。运行时统一用 `CLAUDE_PLUGIN_ROOT` 引用：
 
 ```text
 ${CLAUDE_PLUGIN_ROOT}/

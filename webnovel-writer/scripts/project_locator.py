@@ -28,7 +28,7 @@ CURRENT_PROJECT_POINTER_REL: Path = Path(".claude") / ".webnovel-current-project
 # 该文件用于在“空上下文 + CWD 不在项目内”的情况下仍能定位到正确 project_root。
 GLOBAL_REGISTRY_REL: Path = Path("webnovel-writer") / "workspaces.json"
 
-# Claude Code 常见环境变量（存在时优先作为“工作区根目录”提示）
+# 宿主环境常见环境变量（存在时优先作为“工作区根目录”提示）
 ENV_CLAUDE_PROJECT_DIR = "CLAUDE_PROJECT_DIR"
 ENV_CLAUDE_HOME = "CLAUDE_HOME"
 ENV_WEBNOVEL_CLAUDE_HOME = "WEBNOVEL_CLAUDE_HOME"
@@ -385,7 +385,7 @@ def resolve_project_root(explicit_project_root: Optional[str] = None, *, cwd: Op
         return pointer_root
 
     # 用户级 registry fallback（仅在“有上下文提示”时启用，避免误命中）
-    # - 若 CLAUDE_PROJECT_DIR 存在：认为 Claude Code 提供了工作区上下文
+    # - 若 CLAUDE_PROJECT_DIR 存在：认为宿主提供了工作区上下文
     # - 否则仅在 base 位于某个已记录 workspace 内时启用（前缀匹配）
     allow_last_used = bool(os.environ.get(ENV_CLAUDE_PROJECT_DIR))
     reg_root = _resolve_project_root_from_global_registry(
