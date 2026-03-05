@@ -65,12 +65,18 @@ _cli_project_root: Optional[Path] = None
 
 def get_workflow_state_path() -> Path:
     """Absolute path to workflow_state.json."""
-    project_root = find_project_root(_cli_project_root)
+    if _cli_project_root is not None:
+        project_root = find_project_root(_cli_project_root)
+    else:
+        project_root = find_project_root()
     return project_root / ".webnovel" / "workflow_state.json"
 
 
 def get_call_trace_path() -> Path:
-    project_root = find_project_root(_cli_project_root)
+    if _cli_project_root is not None:
+        project_root = find_project_root(_cli_project_root)
+    else:
+        project_root = find_project_root()
     return project_root / ".webnovel" / "observability" / "call_trace.jsonl"
 
 
@@ -99,7 +105,7 @@ def expected_step_owner(command: str, step_id: str) -> str:
     """Resolve expected caller owner by command + step id.
 
     Returns concise owner tags to align with
-    `.claude/references/claude-code-call-matrix.md`.
+    `references/runtime-call-matrix.md` (legacy file names are also acceptable).
     """
     if command == "webnovel-write":
         mapping = {

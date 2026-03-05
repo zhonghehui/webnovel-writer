@@ -1,4 +1,4 @@
----
+﻿---
 name: system-data-flow-redirect
 purpose: 重定向到权威版本
 ---
@@ -12,12 +12,12 @@ v5.4：版本号对齐，权威版本已更新。
 
 ## 权威版本位置
 
-`${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query/references/system-data-flow.md` (v5.4)
+`${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-query/references/system-data-flow.md` (v5.4)
 
 ## 加载方式
 
 ```bash
-cat "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query/references/system-data-flow.md"
+cat "${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-query/references/system-data-flow.md"
 ```
 
 ## 快速参考
@@ -42,3 +42,4 @@ cat "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query/references/system-data-flow.md"
 - **state.json 精简**: 保持 < 5KB，主要包含 progress/protagonist_state/strand_tracker/disambiguation
 
 </instructions>
+

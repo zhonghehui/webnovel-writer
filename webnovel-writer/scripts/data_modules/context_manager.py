@@ -282,6 +282,18 @@ class ContextManager:
 
         return signal
 
+    def _resolve_reference_file(self, filename: str) -> Path:
+        """Resolve shared reference files with neutral-first fallback."""
+        candidates = (
+            self.config.project_root / ".webnovel" / "references" / filename,
+            self.config.project_root / "references" / filename,
+            self.config.project_root / ".claude" / "references" / filename,  # legacy
+        )
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate
+        return candidates[0]
+
     def _load_genre_profile(self, state: Dict[str, Any]) -> Dict[str, Any]:
         if not getattr(self.config, "context_genre_profile_enabled", True):
             return {}
@@ -299,8 +311,8 @@ class ContextManager:
         primary_genre = genres[0]
         secondary_genres = genres[1:]
         composite = len(genres) > 1
-        profile_path = self.config.project_root / ".claude" / "references" / "genre-profiles.md"
-        taxonomy_path = self.config.project_root / ".claude" / "references" / "reading-power-taxonomy.md"
+        profile_path = self._resolve_reference_file("genre-profiles.md")
+        taxonomy_path = self._resolve_reference_file("reading-power-taxonomy.md")
 
         profile_text = profile_path.read_text(encoding="utf-8") if profile_path.exists() else ""
         taxonomy_text = taxonomy_path.read_text(encoding="utf-8") if taxonomy_path.exists() else ""

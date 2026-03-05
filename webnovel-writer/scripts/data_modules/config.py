@@ -17,14 +17,49 @@ from runtime_compat import normalize_windows_path
 
 from .context_weights import TEMPLATE_WEIGHTS_DYNAMIC_DEFAULT
 
-def _get_user_claude_root() -> Path:
-    raw = os.environ.get("WEBNOVEL_CLAUDE_HOME") or os.environ.get("CLAUDE_HOME")
-    if raw:
+def _iter_user_home_roots() -> list[Path]:
+    """Resolve user-home candidates in neutral-first order."""
+    roots: list[Path] = []
+    seen: set[str] = set()
+
+    for env_name in ("WEBNOVEL_HOME", "WEBNOVEL_CLAUDE_HOME", "CLAUDE_HOME"):
+        raw = os.environ.get(env_name)
+        if not raw:
+            continue
         try:
-            return normalize_windows_path(raw).expanduser().resolve()
+            root = normalize_windows_path(raw).expanduser().resolve()
         except Exception:
-            return normalize_windows_path(raw).expanduser()
-    return (Path.home() / ".claude").resolve()
+            root = normalize_windows_path(raw).expanduser()
+        key = os.path.normcase(str(root))
+        if key in seen:
+            continue
+        seen.add(key)
+        roots.append(root)
+
+    for default in (Path.home() / ".webnovel", Path.home() / ".claude"):
+        try:
+            root = default.resolve()
+        except Exception:
+            root = default
+        key = os.path.normcase(str(root))
+        if key in seen:
+            continue
+        seen.add(key)
+        roots.append(root)
+
+    return roots
+
+
+def _get_user_claude_root() -> Path:
+    """
+    Legacy helper kept for backward compatibility.
+
+    Returns the first resolved user home root (neutral-first order).
+    """
+    roots = _iter_user_home_roots()
+    if roots:
+        return roots[0]
+    return (Path.home() / ".webnovel").resolve()
 
 
 def _load_dotenv_file(env_path: Path, *, override: bool = False) -> bool:
@@ -48,13 +83,13 @@ def _load_dotenv_file(env_path: Path, *, override: bool = False) -> bool:
         return False
 
 
-def _load_dotenv():
+def _load_dotenv_legacy():
     """
     加载 .env 文件（best-effort）。
 
     约定：
     - 项目级 `.env`（当前工作目录下）优先；
-    - 全局 `.env` 作为兜底：`~/.claude/webnovel-writer/.env`
+    - 全局 `.env` 作为兜底：`~/.webnovel/webnovel-writer/.env`（兼容 `~/.claude/...`）
     """
     # 1) 当前目录（常见：用户从项目根目录执行）
     _load_dotenv_file(Path.cwd() / ".env", override=False)
@@ -62,6 +97,18 @@ def _load_dotenv():
     # 2) 用户级全局（常见：skills/agents 全局安装，API key 放这里最省心）
     global_env = _get_user_claude_root() / "webnovel-writer" / ".env"
     _load_dotenv_file(global_env, override=False)
+
+
+def _load_dotenv_neutral() -> None:
+    """Load dotenv files with neutral-first fallback order."""
+    _load_dotenv_file(Path.cwd() / ".env", override=False)
+    for home_root in _iter_user_home_roots():
+        _load_dotenv_file(home_root / "webnovel-writer" / ".env", override=False)
+
+
+def _load_dotenv() -> None:
+    """Backward-compatible loader entry used by tests and legacy callers."""
+    _load_dotenv_neutral()
 
 
 def _load_project_dotenv(project_root: Path) -> None:
@@ -74,7 +121,7 @@ def _load_project_dotenv(project_root: Path) -> None:
     except Exception:
         return
 
-_load_dotenv()
+_load_dotenv_neutral()
 
 
 def _default_context_template_weights_dynamic() -> dict[str, dict[str, dict[str, float]]]:
@@ -334,7 +381,7 @@ def get_config(project_root: Optional[Path] = None) -> DataModulesConfig:
         # 默认不要盲目以 CWD 作为 project_root（很容易写到错误目录）。
         # 使用统一的 project_locator 自动探测：
         # - 支持 WEBNOVEL_PROJECT_ROOT
-        # - 支持 `.claude/.webnovel-current-project` 指针文件
+        # - 支持 `.webnovel-current-project` 指针文件（兼容 `.claude/.webnovel-current-project`）
         # - 支持从当前目录/父目录寻找 `.webnovel/state.json`
         from project_locator import resolve_project_root
 

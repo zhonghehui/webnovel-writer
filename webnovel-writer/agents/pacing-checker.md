@@ -1,4 +1,4 @@
----
+﻿---
 name: pacing-checker
 description: Strand Weave 节奏检查，输出结构化报告供润色步骤参考
 tools: Read, Grep, Bash
@@ -9,7 +9,7 @@ model: inherit
 
 > **Role**: Pacing analyst enforcing Strand Weave balance to prevent reader fatigue.
 
-> **输出格式**: 遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
+> **输出格式**: 遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
 
 ## Scope
 
@@ -39,12 +39,12 @@ model: inherit
 **Optional: Use status_reporter for automated analysis**:
 ```bash
 # 获取 Strand Weave 详细分析（推荐）
-# 仅使用 CLAUDE_PLUGIN_ROOT，避免多路径探测带来的误判
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+# 仅使用 WEBNOVEL_PLUGIN_ROOT，避免多路径探测带来的误判
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 python "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" status -- --focus strand
 
@@ -224,3 +224,4 @@ Based on current balance, Chapter {next} should prioritize:
 - All strands appear at least once per their threshold
 - Report provides actionable next-chapter recommendation
 - Trend analysis shows balanced distribution (if sufficient history)
+

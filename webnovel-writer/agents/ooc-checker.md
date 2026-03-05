@@ -1,4 +1,4 @@
----
+﻿---
 name: ooc-checker
 description: 人物OOC检查，输出结构化报告供润色步骤参考
 tools: Read, Grep
@@ -9,7 +9,7 @@ model: inherit
 
 > **Role**: Character integrity guardian preventing OOC (Out-Of-Character) violations.
 
-> **输出格式**: 遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
+> **输出格式**: 遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
 
 ## Scope
 
@@ -211,3 +211,4 @@ Chapters {N} - {M}
 - Character development is gradual and well-motivated
 - Speech patterns match established profiles
 - Report distinguishes between OOC and legitimate growth
+

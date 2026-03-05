@@ -1,4 +1,4 @@
-# Step 3 Review Gate
+﻿# Step 3 Review Gate
 
 ## 调用约束（硬规则）
 
@@ -58,7 +58,7 @@ parallel Task(agent, {chapter, chapter_file, project_root}) for agent in selecte
 
 ## 输出契约（统一）
 
-每个 checker 返回值必须遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md`：
+每个 checker 返回值必须遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md`：
 - 必含：`agent`、`chapter`、`overall_score`、`pass`、`issues`、`metrics`、`summary`
 - 允许扩展字段（如 `hard_violations`、`soft_suggestions`），但不得替代必填字段
 
@@ -125,3 +125,4 @@ else:
 - 时间回跳 → 添加闪回标记，或调整时间锚点
 - 大跨度无过渡 → 添加时间过渡句/段，或插入过渡章
 - 事件先后矛盾 → 调整事件发生顺序或添加时间跳跃说明
+

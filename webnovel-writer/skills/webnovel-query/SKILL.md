@@ -1,4 +1,4 @@
----
+﻿---
 name: webnovel-query
 description: Queries project settings for characters, powers, factions, items, and foreshadowing. Supports urgency analysis and golden finger status. Activates when user asks about story elements or /webnovel-query.
 allowed-tools: Read Grep Bash AskUserQuestion
@@ -10,23 +10,23 @@ allowed-tools: Read Grep Bash AskUserQuestion
 
 - 宿主环境的“工作区根目录”不一定等于“书项目根目录”。常见结构：工作区为 `D:\wk\xiaoshuo`，书项目为 `D:\wk\xiaoshuo\凡人资本论`。
 - 必须先解析真实书项目根（必须包含 `.webnovel/state.json`），后续所有读写路径都以该目录为准。
-- **禁止**在插件目录 `${CLAUDE_PLUGIN_ROOT}/` 下读取或写入项目文件
+- **禁止**在插件目录 `${WEBNOVEL_PLUGIN_ROOT}/` 下读取或写入项目文件
 
 环境设置（bash 命令执行前）：
 ```bash
-export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
+export WORKSPACE_ROOT="${WEBNOVEL_PROJECT_DIR:-$PWD}"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-query" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-query" >&2
   exit 1
 fi
-export SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}/skills/webnovel-query"
+export SKILL_ROOT="${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-query"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+export SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
 ```
@@ -190,3 +190,4 @@ python "${SCRIPTS_DIR}/webnovel.py" --project-root "$PROJECT_ROOT" status -- --f
 ## ⚠️ 数据一致性检查
 {state.json 与静态文件的差异}
 ```
+

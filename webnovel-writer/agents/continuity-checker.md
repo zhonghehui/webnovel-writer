@@ -1,4 +1,4 @@
----
+﻿---
 name: continuity-checker
 description: 连贯性检查，输出结构化报告供润色步骤参考
 tools: Read, Grep
@@ -9,7 +9,7 @@ model: inherit
 
 > **Role**: Narrative flow guardian ensuring smooth transitions and logical plot progression.
 
-> **输出格式**: 遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
+> **输出格式**: 遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
 
 ## Scope
 
@@ -255,3 +255,4 @@ Chapters {N} - {M}
 - 0 major logic holes
 - Outline deviations properly tagged
 - Report identifies specific chapters for fixes
+

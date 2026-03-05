@@ -1,4 +1,4 @@
----
+﻿---
 name: webnovel-plan
 description: Builds volume and chapter outlines from the total outline, inherits creative constraints, and prepares writing-ready chapter plans. Use when the user asks for outlining or runs /webnovel-plan.
 ---
@@ -14,19 +14,19 @@ Setting policy: 先基于 init 产出的总纲+世界观补齐设定集基线；
 
 环境设置（bash 命令执行前）：
 ```bash
-export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
+export WORKSPACE_ROOT="${WEBNOVEL_PROJECT_DIR:-$PWD}"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-plan" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/skills/webnovel-plan" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-plan" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-plan" >&2
   exit 1
 fi
-export SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}/skills/webnovel-plan"
+export SKILL_ROOT="${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-plan"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+export SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
 ```
@@ -477,3 +477,4 @@ If any hard fail triggers:
 Next steps:
 - 继续规划下一卷 → /webnovel-plan
 - 开始写作 → /webnovel-write
+

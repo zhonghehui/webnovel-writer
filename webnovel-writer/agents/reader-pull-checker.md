@@ -1,4 +1,4 @@
----
+﻿---
 name: reader-pull-checker
 description: 追读力检查器 v5.5，评估钩子/微兑现/约束分层，支持 Override Contract
 tools: Read, Grep, Bash
@@ -11,8 +11,8 @@ model: inherit
 
 ## 核心参考
 
-- **Taxonomy**: `${CLAUDE_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
-- **Genre Profile**: `${CLAUDE_PLUGIN_ROOT}/references/genre-profiles.md`
+- **Taxonomy**: `${WEBNOVEL_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
+- **Genre Profile**: `${WEBNOVEL_PLUGIN_ROOT}/references/genre-profiles.md`
 - **章节追读力数据**: `index.db → chapter_reading_power`
 - **上章钩子**: `state.json → chapter_meta` 或 `index.db`
 
@@ -315,3 +315,4 @@ model: inherit
 - [ ] 微兑现数量达标（或有Override）
 - [ ] 无连续3章以上同型
 - [ ] 输出清晰的"下章动机"
+

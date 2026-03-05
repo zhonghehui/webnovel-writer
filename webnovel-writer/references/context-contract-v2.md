@@ -1,4 +1,4 @@
-# Context Contract v2
+﻿# Context Contract v2
 
 ## 目的
 - 为 `Context Agent`、`Writer`、`Review` 提供统一、可排序、可追踪的上下文契约。
@@ -32,7 +32,7 @@
   - 聚合审查趋势与低分区间（`review_trend` / `low_score_ranges`）
 - `genre_profile`
   - 基于 `state.json -> project.genre` 自动选取题材策略片段
-  - 引用 `${CLAUDE_PLUGIN_ROOT}/references/genre-profiles.md` 与 `${CLAUDE_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
+  - 引用 `${WEBNOVEL_PLUGIN_ROOT}/references/genre-profiles.md` 与 `${WEBNOVEL_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
   - 输出 `reference_hints` 供 Writer 快速执行
 
 ## Phase C 扩展段
@@ -107,3 +107,4 @@ Phase I:
 - `context_genre_profile_max_genres`
 - `context_genre_profile_separators`
 - 新增 `genre_profile.genres/composite/composite_hints`
+

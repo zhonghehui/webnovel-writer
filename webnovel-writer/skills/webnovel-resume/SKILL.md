@@ -1,4 +1,4 @@
----
+﻿---
 name: webnovel-resume
 description: Recovers interrupted webnovel tasks with precise workflow state tracking. Detects interruption point and provides safe recovery options. Activates when user wants to resume or /webnovel-resume.
 allowed-tools: Read Bash AskUserQuestion
@@ -13,19 +13,19 @@ allowed-tools: Read Bash AskUserQuestion
 
 环境设置（bash 命令执行前）：
 ```bash
-export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
+export WORKSPACE_ROOT="${WEBNOVEL_PROJECT_DIR:-$PWD}"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-resume" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/skills/webnovel-resume" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-resume" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-resume" >&2
   exit 1
 fi
-export SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}/skills/webnovel-resume"
+export SKILL_ROOT="${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-resume"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+export SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
 ```
@@ -200,3 +200,4 @@ B) 回滚到上一章（安全）
 - ❌ 自动选择恢复策略
 - ❌ 跳过中断检测
 - ❌ 不验证就修复 state.json
+

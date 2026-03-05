@@ -1,4 +1,4 @@
----
+﻿---
 name: high-point-checker
 description: 爽点密度检查 v5.5，支持迪化误解/身份掉马模式，输出结构化报告
 tools: Read, Grep, Bash
@@ -9,12 +9,12 @@ model: inherit
 
 > **Role**: Quality assurance specialist focused on reader satisfaction mechanics (爽点设计).
 
-> **输出格式**: 遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
+> **输出格式**: 遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
 
 ## 核心参考
 
-- **Taxonomy**: `${CLAUDE_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
-- **Genre Profile**: `${CLAUDE_PLUGIN_ROOT}/references/genre-profiles.md`
+- **Taxonomy**: `${WEBNOVEL_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
+- **Genre Profile**: `${WEBNOVEL_PLUGIN_ROOT}/references/genre-profiles.md`
 
 ## Scope
 
@@ -215,3 +215,4 @@ Chapters {N} - {M}
   "summary": "爽点密度达标，类型分布健康，执行质量稳定。"
 }
 ```
+

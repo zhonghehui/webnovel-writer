@@ -205,7 +205,7 @@ def test_context_manager_includes_reader_signal_and_genre_profile(temp_project):
 
 
 def test_context_manager_genre_section_and_refs_extraction(temp_project):
-    refs_dir = temp_project.project_root / ".claude" / "references"
+    refs_dir = temp_project.project_root / ".webnovel" / "references"
     refs_dir.mkdir(parents=True, exist_ok=True)
 
     (refs_dir / "genre-profiles.md").write_text(
@@ -240,6 +240,19 @@ def test_context_manager_genre_section_and_refs_extraction(temp_project):
 
     fallback_excerpt = manager._extract_genre_section("## a\n1\n## b\n2", "unknown")
     assert fallback_excerpt.startswith("## a")
+
+
+def test_context_manager_genre_profile_supports_legacy_claude_refs(temp_project):
+    refs_dir = temp_project.project_root / ".claude" / "references"
+    refs_dir.mkdir(parents=True, exist_ok=True)
+    (refs_dir / "genre-profiles.md").write_text("## xuanhuan\n- legacy profile", encoding="utf-8")
+    (refs_dir / "reading-power-taxonomy.md").write_text("## xuanhuan\n- legacy taxonomy", encoding="utf-8")
+
+    manager = ContextManager(temp_project)
+    profile = manager._load_genre_profile({"project": {"genre": "xuanhuan"}})
+
+    assert "legacy profile" in profile.get("profile_excerpt", "")
+    assert "legacy taxonomy" in profile.get("taxonomy_excerpt", "")
 
 
 def test_context_manager_reader_signal_with_debt_and_disable_switch(temp_project):
@@ -313,7 +326,7 @@ def test_context_manager_includes_writing_guidance(temp_project):
 
 
 def test_context_manager_dynamic_weights_and_composite_genre(temp_project):
-    refs_dir = temp_project.project_root / ".claude" / "references"
+    refs_dir = temp_project.project_root / ".webnovel" / "references"
     refs_dir.mkdir(parents=True, exist_ok=True)
     (refs_dir / "genre-profiles.md").write_text(
         """
@@ -364,7 +377,7 @@ def test_context_manager_dynamic_weights_and_composite_genre(temp_project):
 
 
 def test_context_manager_genre_alias_guidance_and_heading_extraction(temp_project):
-    refs_dir = temp_project.project_root / ".claude" / "references"
+    refs_dir = temp_project.project_root / ".webnovel" / "references"
     refs_dir.mkdir(parents=True, exist_ok=True)
     (refs_dir / "genre-profiles.md").write_text(
         """
@@ -407,7 +420,7 @@ def test_context_manager_genre_alias_guidance_and_heading_extraction(temp_projec
 
 
 def test_context_manager_genre_aliases_normalized_for_profile_lookup(temp_project):
-    refs_dir = temp_project.project_root / ".claude" / "references"
+    refs_dir = temp_project.project_root / ".webnovel" / "references"
     refs_dir.mkdir(parents=True, exist_ok=True)
     (refs_dir / "genre-profiles.md").write_text(
         """

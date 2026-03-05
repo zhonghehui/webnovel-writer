@@ -1,21 +1,21 @@
-# 项目结构与运维
+﻿# 项目结构与运维
 
 ## 目录层级（真实运行）
 
 在插件宿主 + Marketplace 安装下，至少有 4 层概念：
 
-1. `WORKSPACE_ROOT`（宿主工作区根，通常是 `${CLAUDE_PROJECT_DIR}`）
-2. `WORKSPACE_ROOT/.claude/`（工作区级指针与配置）
+1. `WORKSPACE_ROOT`（宿主工作区根，通常是 `${WEBNOVEL_PROJECT_DIR}`）
+2. 工作区指针：`WORKSPACE_ROOT/.webnovel-current-project`（兼容旧 `WORKSPACE_ROOT/.claude/.webnovel-current-project`）
 3. `PROJECT_ROOT`（真实小说项目根，`/webnovel-init` 按书名创建）
-4. `CLAUDE_PLUGIN_ROOT`（插件缓存目录，不在项目内）
+4. `WEBNOVEL_PLUGIN_ROOT`（插件缓存目录，不在项目内）
 
-### A) Workspace 目录（含 `.claude`）
+### A) Workspace 目录（推荐）
 
 ```text
 workspace-root/
-├── .claude/
-│   ├── .webnovel-current-project   # 指向当前小说项目根
-│   └── settings.json
+├── .webnovel-current-project       # 指向当前小说项目根
+├── .claude/                        # 可选，仅用于兼容旧流程
+│   └── .webnovel-current-project   # 旧指针（可与新指针并存）
 ├── 小说A/
 ├── 小说B/
 └── ...
@@ -33,10 +33,10 @@ project-root/
 
 ## 插件目录（Marketplace 安装）
 
-插件不在小说项目目录内，而在插件缓存目录。运行时统一用 `CLAUDE_PLUGIN_ROOT` 引用：
+插件不在小说项目目录内，而在插件缓存目录。运行时统一用 `WEBNOVEL_PLUGIN_ROOT` 引用：
 
 ```text
-${CLAUDE_PLUGIN_ROOT}/
+${WEBNOVEL_PLUGIN_ROOT}/
 ├── skills/
 ├── agents/
 ├── scripts/
@@ -48,7 +48,7 @@ ${CLAUDE_PLUGIN_ROOT}/
 当工作区没有可用指针时，会使用用户级 registry 做 `workspace -> current_project_root` 映射：
 
 ```text
-${CLAUDE_HOME:-~/.claude}/webnovel-writer/workspaces.json
+${WEBNOVEL_HOME:-~/.webnovel}/webnovel-writer/workspaces.json
 ```
 
 ## 模拟目录实测（2026-03-03）
@@ -56,7 +56,7 @@ ${CLAUDE_HOME:-~/.claude}/webnovel-writer/workspaces.json
 基于 `D:\wk\novel skill\plugin-sim-20260303-012048` 的实际结果：
 
 - `WORKSPACE_ROOT`：`D:\wk\novel skill\plugin-sim-20260303-012048`
-- 指针文件：`D:\wk\novel skill\plugin-sim-20260303-012048\.claude\.webnovel-current-project`
+- 指针文件：`D:\wk\novel skill\plugin-sim-20260303-012048\.webnovel-current-project`
 - 指针内容：`D:\wk\novel skill\plugin-sim-20260303-012048\凡人资本论-二测`
 - 已创建项目示例：`凡人资本论/`、`凡人资本论-二测/`
 
@@ -65,8 +65,8 @@ ${CLAUDE_HOME:-~/.claude}/webnovel-writer/workspaces.json
 统一前置（手动 CLI 场景）：
 
 ```bash
-export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
-export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+export WORKSPACE_ROOT="${WEBNOVEL_PROJECT_DIR:-$PWD}"
+export SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 export PROJECT_ROOT="$(python "${SCRIPTS_DIR}/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
 ```
 
@@ -94,6 +94,7 @@ python "${SCRIPTS_DIR}/webnovel.py" --project-root "${PROJECT_ROOT}" rag stats
 ### 测试入口
 
 ```bash
-pwsh "${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.ps1" -Mode smoke
-pwsh "${CLAUDE_PLUGIN_ROOT}/scripts/run_tests.ps1" -Mode full
+pwsh "${WEBNOVEL_PLUGIN_ROOT}/scripts/run_tests.ps1" -Mode smoke
+pwsh "${WEBNOVEL_PLUGIN_ROOT}/scripts/run_tests.ps1" -Mode full
 ```
+

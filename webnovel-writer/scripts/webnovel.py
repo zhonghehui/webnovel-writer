@@ -1,15 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-webnovel 统一入口脚本（无须 `cd`）
+webnovel unified launcher (no mandatory `cd`).
 
-用法示例：
+Examples:
   python "<SCRIPTS_DIR>/webnovel.py" where
   python "<SCRIPTS_DIR>/webnovel.py" index stats
 
-说明：
-- 该脚本仅负责把 `.claude/scripts` 加入 sys.path，然后转发到 `data_modules.webnovel`。
-- 适配 skills/agents 在项目级或用户级（~/.claude）安装时的调用方式。
+This wrapper only ensures `scripts/` is on sys.path, then forwards
+to `data_modules.webnovel`.
 """
 
 from __future__ import annotations
@@ -24,7 +23,7 @@ def main() -> None:
     scripts_dir = Path(__file__).resolve().parent
     sys.path.insert(0, str(scripts_dir))
 
-    # 延迟导入，避免 sys.path 未就绪
+    # Lazy import after sys.path patch.
     from data_modules.webnovel import main as _main
 
     _main()
@@ -33,4 +32,3 @@ def main() -> None:
 if __name__ == "__main__":
     enable_windows_utf8_stdio(skip_in_pytest=True)
     main()
-

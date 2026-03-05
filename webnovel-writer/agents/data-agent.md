@@ -1,4 +1,4 @@
----
+﻿---
 name: data-agent
 description: 数据处理Agent (v5.4)，负责 AI 实体提取、场景切片、索引构建，并记录钩子/模式/结束状态与章节摘要。
 tools: Read, Write, Bash
@@ -66,12 +66,12 @@ model: inherit
 - `${SCRIPTS_DIR}/webnovel.py`
 
 ```bash
-# 仅使用 CLAUDE_PLUGIN_ROOT，避免多路径探测带来的误判
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+# 仅使用 WEBNOVEL_PLUGIN_ROOT，避免多路径探测带来的误判
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 # 建议先确认解析出的 project_root，避免写到错误目录
 python "${SCRIPTS_DIR}/webnovel.py" --project-root "{project_root}" where
@@ -301,3 +301,4 @@ python "${SCRIPTS_DIR}/webnovel.py" --project-root "{project_root}" style extrac
 6. ✅ 章节摘要文件生成成功
 7. ✅ chapter_meta 写入 state.json
 8. ✅ 输出格式为有效 JSON
+

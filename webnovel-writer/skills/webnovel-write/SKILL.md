@@ -1,4 +1,4 @@
----
+﻿---
 name: webnovel-write
 description: Writes webnovel chapters (default 2000-2500 words). Use when the user asks to write a chapter or runs /webnovel-write. Runs context, drafting, review, polish, and data extraction.
 allowed-tools: Read Write Edit Grep Bash Task
@@ -103,31 +103,31 @@ allowed-tools: Read Write Edit Grep Bash Task
 
 必须做：
 - 解析真实书项目根（book project_root）：必须包含 `.webnovel/state.json`。
-- 校验核心输入：`大纲/总纲.md`、`${CLAUDE_PLUGIN_ROOT}/scripts/extract_chapter_context.py` 存在。
+- 校验核心输入：`大纲/总纲.md`、`${WEBNOVEL_PLUGIN_ROOT}/scripts/extract_chapter_context.py` 存在。
 - 规范化变量：
   - `WORKSPACE_ROOT`：宿主环境打开的工作区根目录（可能是书项目的父目录，例如 `D:\wk\xiaoshuo`）
   - `PROJECT_ROOT`：真实书项目根目录（必须包含 `.webnovel/state.json`，例如 `D:\wk\xiaoshuo\凡人资本论`）
-  - `SKILL_ROOT`：skill 所在目录（固定 `${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write`）
-  - `SCRIPTS_DIR`：脚本目录（固定 `${CLAUDE_PLUGIN_ROOT}/scripts`）
+  - `SKILL_ROOT`：skill 所在目录（固定 `${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-write`）
+  - `SCRIPTS_DIR`：脚本目录（固定 `${WEBNOVEL_PLUGIN_ROOT}/scripts`）
   - `chapter_num`：当前章号（整数）
   - `chapter_padded`：四位章号（如 `0007`）
 
 环境设置（bash 命令执行前）：
 ```bash
-# WORKSPACE_ROOT：宿主环境工作区根（通常等于 $CLAUDE_PROJECT_DIR）
-export WORKSPACE_ROOT="${CLAUDE_PROJECT_DIR:-$PWD}"
+# WORKSPACE_ROOT：宿主环境工作区根（通常等于 $WEBNOVEL_PROJECT_DIR）
+export WORKSPACE_ROOT="${WEBNOVEL_PROJECT_DIR:-$PWD}"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-write" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-write" >&2
   exit 1
 fi
-export SKILL_ROOT="${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write"
+export SKILL_ROOT="${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-write"
 
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-export SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+export SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 if [ ! -f "${SCRIPTS_DIR}/extract_chapter_context.py" ]; then
   echo "ERROR: 缺少脚本: ${SCRIPTS_DIR}/extract_chapter_context.py" >&2
@@ -341,3 +341,4 @@ tail -n 1 "${PROJECT_ROOT}/.webnovel/observability/data_agent_timing.jsonl" || t
    - 润色失真：恢复 Step 2A 输出并重做 Step 4；
    - 摘要/状态缺失：只重跑 Step 5；
 3. 重新执行“验证与交付”全部检查，通过后结束。
+

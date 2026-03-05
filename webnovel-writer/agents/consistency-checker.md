@@ -1,4 +1,4 @@
----
+﻿---
 name: consistency-checker
 description: 设定一致性检查，输出结构化报告供润色步骤参考
 tools: Read, Grep, Bash
@@ -9,7 +9,7 @@ model: inherit
 
 > **Role**: Continuity guardian enforcing the second anti-hallucination law (设定即物理 - Settings are Physics).
 
-> **输出格式**: 遵循 `${CLAUDE_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
+> **输出格式**: 遵循 `${WEBNOVEL_PLUGIN_ROOT}/references/checker-output-schema.md` 统一 JSON Schema
 
 ## Scope
 
@@ -199,12 +199,12 @@ Chapters {N} - {M}
 对于发现的 **CRITICAL** 级别问题，自动标记到 invalid_facts（pending）：
 
 ```bash
-# 仅使用 CLAUDE_PLUGIN_ROOT，避免多路径探测带来的误判
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+# 仅使用 WEBNOVEL_PLUGIN_ROOT，避免多路径探测带来的误判
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 python "${SCRIPTS_DIR}/webnovel.py" --project-root "{PROJECT_ROOT}" index mark-invalid \
   --source-type entity \
@@ -231,3 +231,4 @@ python "${SCRIPTS_DIR}/webnovel.py" --project-root "{PROJECT_ROOT}" index mark-i
 - All new entities consistent with existing world-building
 - Location and timeline transitions are logical
 - Report provides specific fix recommendations for polish step
+

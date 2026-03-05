@@ -1,4 +1,4 @@
----
+﻿---
 name: context-agent
 description: 上下文搜集Agent (v5.5)，内置 Contract v2，输出可被 Step 2A 直接消费的创作执行包。
 tools: Read, Grep, Bash
@@ -12,10 +12,10 @@ model: inherit
 
 ## 核心参考
 
-- **Taxonomy**: `${CLAUDE_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
-- **Genre Profile**: `${CLAUDE_PLUGIN_ROOT}/references/genre-profiles.md`
-- **Contract v2**: `${CLAUDE_PLUGIN_ROOT}/skills/webnovel-write/references/step-1.5-contract.md`
-- **Shared References**: `${CLAUDE_PLUGIN_ROOT}/references/shared/` 为单一事实源；如需枚举/扫描参考文件，遇到 `<!-- DEPRECATED:` 的文件一律跳过。
+- **Taxonomy**: `${WEBNOVEL_PLUGIN_ROOT}/references/reading-power-taxonomy.md`
+- **Genre Profile**: `${WEBNOVEL_PLUGIN_ROOT}/references/genre-profiles.md`
+- **Contract v2**: `${WEBNOVEL_PLUGIN_ROOT}/skills/webnovel-write/references/step-1.5-contract.md`
+- **Shared References**: `${WEBNOVEL_PLUGIN_ROOT}/references/shared/` 为单一事实源；如需枚举/扫描参考文件，遇到 `<!-- DEPRECATED:` 的文件一律跳过。
 
 ## 输入
 
@@ -106,12 +106,12 @@ model: inherit
 - `${SCRIPTS_DIR}/webnovel.py`
 
 ```bash
-# 仅使用 CLAUDE_PLUGIN_ROOT，避免多路径探测带来的误判
-if [ -z "${CLAUDE_PLUGIN_ROOT}" ] || [ ! -d "${CLAUDE_PLUGIN_ROOT}/scripts" ]; then
-  echo "ERROR: 未设置 CLAUDE_PLUGIN_ROOT 或缺少目录: ${CLAUDE_PLUGIN_ROOT}/scripts" >&2
+# 仅使用 WEBNOVEL_PLUGIN_ROOT，避免多路径探测带来的误判
+if [ -z "${WEBNOVEL_PLUGIN_ROOT}" ] || [ ! -d "${WEBNOVEL_PLUGIN_ROOT}/scripts" ]; then
+  echo "ERROR: 未设置 WEBNOVEL_PLUGIN_ROOT 或缺少目录: ${WEBNOVEL_PLUGIN_ROOT}/scripts" >&2
   exit 1
 fi
-SCRIPTS_DIR="${CLAUDE_PLUGIN_ROOT}/scripts"
+SCRIPTS_DIR="${WEBNOVEL_PLUGIN_ROOT}/scripts"
 
 # 建议先确认解析出的 project_root，避免写到错误目录
 python "${SCRIPTS_DIR}/webnovel.py" --project-root "{project_root}" where
@@ -266,3 +266,4 @@ Contract v2 必须字段（不可缺）：
 10. ✅ 逻辑红线校验通过（fail=0）
 11. ✅ **时间约束板块完整**（上章时间锚点、本章时间锚点、允许推进跨度、过渡要求、倒计时状态）
 12. ✅ **时间逻辑红线通过**（无回跳、无倒计时跳跃、大跨度有过渡要求）
+
