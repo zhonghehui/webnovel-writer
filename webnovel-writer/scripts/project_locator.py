@@ -2,10 +2,7 @@
 """
 Project location helpers for webnovel-writer scripts.
 
-Resolution goal:
-- Always resolve the actual book project root (the directory containing `.webnovel/state.json`).
-- Support neutral naming by default.
-- Keep backward compatibility with legacy `.claude` pointers and env vars.
+This module only supports neutral naming conventions.
 """
 
 from __future__ import annotations
@@ -20,30 +17,11 @@ from runtime_compat import normalize_windows_path
 
 
 DEFAULT_PROJECT_DIR_NAMES: tuple[str, ...] = ("webnovel-project",)
-
-# Preferred pointer: workspace/.webnovel-current-project
 CURRENT_PROJECT_POINTER_REL: Path = Path(".webnovel-current-project")
-
-# Legacy pointer: workspace/.claude/.webnovel-current-project
-LEGACY_PROJECT_POINTER_REL: Path = Path(".claude") / ".webnovel-current-project"
-
-PROJECT_POINTER_RELS: tuple[Path, ...] = (
-    CURRENT_PROJECT_POINTER_REL,
-    LEGACY_PROJECT_POINTER_REL,
-)
-
-# User-level workspace registry:
-#   <home>/webnovel-writer/workspaces.json
 GLOBAL_REGISTRY_REL: Path = Path("webnovel-writer") / "workspaces.json"
 
-# Neutral env vars
 ENV_WEBNOVEL_PROJECT_DIR = "WEBNOVEL_PROJECT_DIR"
 ENV_WEBNOVEL_HOME = "WEBNOVEL_HOME"
-
-# Legacy env vars (kept for compatibility)
-ENV_CLAUDE_PROJECT_DIR = "CLAUDE_PROJECT_DIR"
-ENV_CLAUDE_HOME = "CLAUDE_HOME"
-ENV_WEBNOVEL_CLAUDE_HOME = "WEBNOVEL_CLAUDE_HOME"
 
 
 def _find_git_root(cwd: Path) -> Optional[Path]:
@@ -80,34 +58,26 @@ def _iter_user_home_roots() -> list[Path]:
 
     Precedence:
     1) WEBNOVEL_HOME
-    2) WEBNOVEL_CLAUDE_HOME (legacy)
-    3) CLAUDE_HOME (legacy)
-    4) ~/.webnovel
-    5) ~/.claude (legacy)
+    2) ~/.webnovel
     """
     roots: list[Path] = []
     seen: set[str] = set()
 
-    for env_name in (ENV_WEBNOVEL_HOME, ENV_WEBNOVEL_CLAUDE_HOME, ENV_CLAUDE_HOME):
-        raw = os.environ.get(env_name)
-        if not raw:
-            continue
+    raw = os.environ.get(ENV_WEBNOVEL_HOME)
+    if raw:
         root = _normalize_user_path(raw)
         key = _normcase_path_key(root)
-        if key in seen:
-            continue
-        seen.add(key)
-        roots.append(root)
+        if key not in seen:
+            seen.add(key)
+            roots.append(root)
 
-    for default in (Path.home() / ".webnovel", Path.home() / ".claude"):
-        try:
-            root = default.resolve()
-        except Exception:
-            root = default
-        key = _normcase_path_key(root)
-        if key in seen:
-            continue
-        seen.add(key)
+    default = Path.home() / ".webnovel"
+    try:
+        root = default.resolve()
+    except Exception:
+        root = default
+    key = _normcase_path_key(root)
+    if key not in seen:
         roots.append(root)
 
     return roots
@@ -126,7 +96,7 @@ def _global_registry_path() -> Path:
 
 
 def _workspace_env_hint() -> Optional[Path]:
-    raw = os.environ.get(ENV_WEBNOVEL_PROJECT_DIR) or os.environ.get(ENV_CLAUDE_PROJECT_DIR)
+    raw = os.environ.get(ENV_WEBNOVEL_PROJECT_DIR)
     if not raw:
         return None
     try:
@@ -316,32 +286,18 @@ def _is_project_root(path: Path) -> bool:
 
 
 def _pointer_candidates(cwd: Path, *, stop_at: Optional[Path] = None) -> Iterable[Path]:
-    """Yield neutral+legacy pointer file candidates from cwd up to parents."""
+    """Yield pointer candidates from cwd up to parents."""
     for candidate in (cwd, *cwd.parents):
-        for rel in PROJECT_POINTER_RELS:
-            yield candidate / rel
+        yield candidate / CURRENT_PROJECT_POINTER_REL
         if stop_at is not None and candidate == stop_at:
             break
-
-
-def _relative_pointer_base(pointer_file: Path) -> Path:
-    """
-    Base directory for resolving relative pointers.
-
-    - For neutral pointer: workspace/.webnovel-current-project -> workspace
-    - For legacy pointer: workspace/.claude/.webnovel-current-project -> workspace
-    """
-    parent = pointer_file.parent
-    if parent.name == ".claude":
-        return parent.parent
-    return parent
 
 
 def _resolve_project_root_from_pointer(cwd: Path, *, stop_at: Optional[Path] = None) -> Optional[Path]:
     """
     Resolve project root from workspace pointer files.
 
-    Pointer format: plain text path (absolute or relative).
+    Pointer format: plain text path (absolute or relative, relative to workspace root).
     """
     for pointer_file in _pointer_candidates(cwd, stop_at=stop_at):
         if not pointer_file.is_file():
@@ -354,27 +310,16 @@ def _resolve_project_root_from_pointer(cwd: Path, *, stop_at: Optional[Path] = N
             continue
         target = normalize_windows_path(raw).expanduser()
         if not target.is_absolute():
-            target = (_relative_pointer_base(pointer_file) / target).resolve()
+            target = (pointer_file.parent / target).resolve()
         if _is_project_root(target):
             return target.resolve()
     return None
 
 
 def _find_workspace_root_with_markers(start: Path) -> Optional[Path]:
-    """
-    Find nearest ancestor that looks like a workspace root.
-
-    Markers:
-    - `.webnovel-current-project`
-    - `.claude/.webnovel-current-project`
-    - `.claude/` directory
-    """
+    """Find nearest ancestor containing `.webnovel-current-project`."""
     for candidate in (start, *start.parents):
         if (candidate / CURRENT_PROJECT_POINTER_REL).exists():
-            return candidate
-        if (candidate / LEGACY_PROJECT_POINTER_REL).exists():
-            return candidate
-        if (candidate / ".claude").is_dir():
             return candidate
     return None
 
@@ -389,12 +334,9 @@ def _write_pointer_file(pointer_file: Path, target_root: Path) -> Optional[Path]
 
 def write_current_project_pointer(project_root: Path, *, workspace_root: Optional[Path] = None) -> Optional[Path]:
     """
-    Write workspace-level pointer(s) and return the preferred pointer file path.
+    Write workspace-level pointer and return pointer path.
 
-    Behavior:
-    - Always try to write neutral pointer: `<workspace>/.webnovel-current-project`.
-    - If `<workspace>/.claude/` exists, also mirror to legacy pointer for compatibility.
-    - If workspace root cannot be inferred, fallback to project parent only for registry update.
+    If workspace root cannot be inferred, fallback to project parent only for registry update.
     """
     root = normalize_windows_path(project_root).expanduser().resolve()
     if not _is_project_root(root):
@@ -419,15 +361,7 @@ def write_current_project_pointer(project_root: Path, *, workspace_root: Optiona
 
     pointer_file: Optional[Path] = None
     if ws_root is not None:
-        # Preferred neutral pointer
         pointer_file = _write_pointer_file(ws_root / CURRENT_PROJECT_POINTER_REL, root)
-
-        # Legacy mirror when `.claude/` already exists
-        legacy_dir = ws_root / ".claude"
-        if legacy_dir.is_dir():
-            legacy_written = _write_pointer_file(ws_root / LEGACY_PROJECT_POINTER_REL, root)
-            if pointer_file is None:
-                pointer_file = legacy_written
 
     # Best-effort registry update (non-blocking)
     try:
@@ -445,7 +379,7 @@ def resolve_project_root(explicit_project_root: Optional[str] = None, *, cwd: Op
     Resolution order:
     1) explicit_project_root (book root or workspace root)
     2) env WEBNOVEL_PROJECT_ROOT
-    3) pointer fallback from cwd (neutral + legacy)
+    3) pointer fallback from cwd
     4) user-level registry fallback
     5) filesystem search from cwd upward, including `webnovel-project/`
     """
@@ -486,7 +420,6 @@ def resolve_project_root(explicit_project_root: Optional[str] = None, *, cwd: Op
     if pointer_root is not None:
         return pointer_root
 
-    # Only allow last-used fallback when runtime provides workspace context env vars.
     allow_last_used = _workspace_env_hint() is not None
     reg_root = _resolve_project_root_from_global_registry(
         base,

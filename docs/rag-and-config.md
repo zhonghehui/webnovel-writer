@@ -3,8 +3,8 @@
 ## RAG 检索架构
 
 ```text
-查询 → QueryRouter(auto) → vector / bm25 / hybrid / graph_hybrid
-                     └→ RRF 融合 + Rerank → Top-K
+查询 -> QueryRouter(auto) -> vector / bm25 / hybrid / graph_hybrid
+                            -> RRF 融合 + Rerank -> Top-K
 ```
 
 默认模型：
@@ -16,7 +16,7 @@
 
 1. 进程环境变量（最高优先级）
 2. 书项目根目录下的 `.env`
-3. 用户级全局：`~/.webnovel/webnovel-writer/.env`（兼容 `~/.claude/...`）
+3. 用户级全局：`~/.webnovel/webnovel-writer/.env`
 
 ## `.env` 最小配置
 

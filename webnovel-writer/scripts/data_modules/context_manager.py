@@ -283,11 +283,10 @@ class ContextManager:
         return signal
 
     def _resolve_reference_file(self, filename: str) -> Path:
-        """Resolve shared reference files with neutral-first fallback."""
+        """Resolve shared reference files with neutral fallback."""
         candidates = (
             self.config.project_root / ".webnovel" / "references" / filename,
             self.config.project_root / "references" / filename,
-            self.config.project_root / ".claude" / "references" / filename,  # legacy
         )
         for candidate in candidates:
             if candidate.exists():

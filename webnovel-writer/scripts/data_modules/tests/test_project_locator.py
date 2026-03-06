@@ -68,7 +68,6 @@ def test_write_pointer_writes_neutral_pointer_without_legacy_dir(tmp_path):
     _ensure_scripts_on_path()
     from project_locator import (
         CURRENT_PROJECT_POINTER_REL,
-        LEGACY_PROJECT_POINTER_REL,
         resolve_project_root,
         write_current_project_pointer,
     )
@@ -81,44 +80,28 @@ def test_write_pointer_writes_neutral_pointer_without_legacy_dir(tmp_path):
     pointer_file = write_current_project_pointer(project_root, workspace_root=workspace)
     assert pointer_file == (workspace / CURRENT_PROJECT_POINTER_REL)
     assert pointer_file.is_file()
-    assert not (workspace / LEGACY_PROJECT_POINTER_REL).exists()
 
     resolved = resolve_project_root(cwd=workspace)
     assert resolved == project_root.resolve()
 
 
-def test_write_pointer_mirrors_legacy_when_claude_dir_exists(tmp_path):
+def test_write_pointer_overwrites_existing_pointer(tmp_path):
     _ensure_scripts_on_path()
     from project_locator import (
         CURRENT_PROJECT_POINTER_REL,
-        LEGACY_PROJECT_POINTER_REL,
         write_current_project_pointer,
     )
 
     workspace = tmp_path / "workspace"
-    (workspace / ".claude").mkdir(parents=True, exist_ok=True)
+    workspace.mkdir(parents=True, exist_ok=True)
     project_root = workspace / "book"
     _create_project_root(project_root)
+    (workspace / CURRENT_PROJECT_POINTER_REL).write_text(str(tmp_path / "stale"), encoding="utf-8")
 
     pointer_file = write_current_project_pointer(project_root, workspace_root=workspace)
     assert pointer_file == (workspace / CURRENT_PROJECT_POINTER_REL)
     assert (workspace / CURRENT_PROJECT_POINTER_REL).is_file()
-    assert (workspace / LEGACY_PROJECT_POINTER_REL).is_file()
-
-
-def test_resolve_project_root_supports_legacy_pointer(tmp_path):
-    _ensure_scripts_on_path()
-    from project_locator import resolve_project_root
-
-    workspace = tmp_path / "workspace"
-    (workspace / ".claude").mkdir(parents=True, exist_ok=True)
-    project_root = workspace / "book"
-    _create_project_root(project_root)
-
-    (workspace / ".claude" / ".webnovel-current-project").write_text(str(project_root), encoding="utf-8")
-
-    resolved = resolve_project_root(cwd=workspace)
-    assert resolved == project_root.resolve()
+    assert (workspace / CURRENT_PROJECT_POINTER_REL).read_text(encoding="utf-8").strip() == str(project_root.resolve())
 
 
 def test_resolve_project_root_ignores_stale_pointer_and_fallbacks(tmp_path):

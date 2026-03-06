@@ -5,7 +5,7 @@
 在插件宿主 + Marketplace 安装下，至少有 4 层概念：
 
 1. `WORKSPACE_ROOT`（宿主工作区根，通常是 `${WEBNOVEL_PROJECT_DIR}`）
-2. 工作区指针：`WORKSPACE_ROOT/.webnovel-current-project`（兼容旧 `WORKSPACE_ROOT/.claude/.webnovel-current-project`）
+2. 工作区指针：`WORKSPACE_ROOT/.webnovel-current-project`
 3. `PROJECT_ROOT`（真实小说项目根，`/webnovel-init` 按书名创建）
 4. `WEBNOVEL_PLUGIN_ROOT`（插件缓存目录，不在项目内）
 
@@ -14,8 +14,6 @@
 ```text
 workspace-root/
 ├── .webnovel-current-project       # 指向当前小说项目根
-├── .claude/                        # 可选，仅用于兼容旧流程
-│   └── .webnovel-current-project   # 旧指针（可与新指针并存）
 ├── 小说A/
 ├── 小说B/
 └── ...

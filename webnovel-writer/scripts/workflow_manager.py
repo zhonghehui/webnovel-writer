@@ -105,7 +105,7 @@ def expected_step_owner(command: str, step_id: str) -> str:
     """Resolve expected caller owner by command + step id.
 
     Returns concise owner tags to align with
-    `references/runtime-call-matrix.md` (legacy file names are also acceptable).
+    `references/runtime-call-matrix.md`.
     """
     if command == "webnovel-write":
         mapping = {

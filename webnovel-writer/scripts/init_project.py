@@ -263,8 +263,8 @@ def init_project(
     cultivation_subtiers: str = "",
 ) -> None:
     project_path = Path(project_dir).expanduser().resolve()
-    if any(part in {".webnovel", ".claude"} for part in project_path.parts):
-        raise SystemExit("Refusing to initialize a project inside hidden metadata dirs (.webnovel/.claude).")
+    if ".webnovel" in project_path.parts:
+        raise SystemExit("Refusing to initialize a project inside .webnovel.")
     project_path.mkdir(parents=True, exist_ok=True)
 
     # 目录结构（同时兼容“卷目录”与后续扩展）

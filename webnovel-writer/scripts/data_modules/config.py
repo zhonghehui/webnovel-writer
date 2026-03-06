@@ -22,7 +22,7 @@ def _iter_user_home_roots() -> list[Path]:
     roots: list[Path] = []
     seen: set[str] = set()
 
-    for env_name in ("WEBNOVEL_HOME", "WEBNOVEL_CLAUDE_HOME", "CLAUDE_HOME"):
+    for env_name in ("WEBNOVEL_HOME",):
         raw = os.environ.get(env_name)
         if not raw:
             continue
@@ -36,7 +36,7 @@ def _iter_user_home_roots() -> list[Path]:
         seen.add(key)
         roots.append(root)
 
-    for default in (Path.home() / ".webnovel", Path.home() / ".claude"):
+    for default in (Path.home() / ".webnovel",):
         try:
             root = default.resolve()
         except Exception:
@@ -48,18 +48,6 @@ def _iter_user_home_roots() -> list[Path]:
         roots.append(root)
 
     return roots
-
-
-def _get_user_claude_root() -> Path:
-    """
-    Legacy helper kept for backward compatibility.
-
-    Returns the first resolved user home root (neutral-first order).
-    """
-    roots = _iter_user_home_roots()
-    if roots:
-        return roots[0]
-    return (Path.home() / ".webnovel").resolve()
 
 
 def _load_dotenv_file(env_path: Path, *, override: bool = False) -> bool:
@@ -84,18 +72,21 @@ def _load_dotenv_file(env_path: Path, *, override: bool = False) -> bool:
 
 
 def _load_dotenv_legacy():
+    _load_dotenv_neutral()
+    return
+
     """
     加载 .env 文件（best-effort）。
 
     约定：
     - 项目级 `.env`（当前工作目录下）优先；
-    - 全局 `.env` 作为兜底：`~/.webnovel/webnovel-writer/.env`（兼容 `~/.claude/...`）
+    - 全局 `.env` 作为兜底：`~/.webnovel/webnovel-writer/.env`
     """
     # 1) 当前目录（常见：用户从项目根目录执行）
     _load_dotenv_file(Path.cwd() / ".env", override=False)
 
     # 2) 用户级全局（常见：skills/agents 全局安装，API key 放这里最省心）
-    global_env = _get_user_claude_root() / "webnovel-writer" / ".env"
+    global_env = (Path.home() / ".webnovel") / "webnovel-writer" / ".env"
     _load_dotenv_file(global_env, override=False)
 
 
@@ -107,7 +98,7 @@ def _load_dotenv_neutral() -> None:
 
 
 def _load_dotenv() -> None:
-    """Backward-compatible loader entry used by tests and legacy callers."""
+    """Load dotenv files."""
     _load_dotenv_neutral()
 
 
@@ -381,7 +372,7 @@ def get_config(project_root: Optional[Path] = None) -> DataModulesConfig:
         # 默认不要盲目以 CWD 作为 project_root（很容易写到错误目录）。
         # 使用统一的 project_locator 自动探测：
         # - 支持 WEBNOVEL_PROJECT_ROOT
-        # - 支持 `.webnovel-current-project` 指针文件（兼容 `.claude/.webnovel-current-project`）
+        # - 支持 `.webnovel-current-project` 指针文件
         # - 支持从当前目录/父目录寻找 `.webnovel/state.json`
         from project_locator import resolve_project_root
 

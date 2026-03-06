@@ -242,19 +242,6 @@ def test_context_manager_genre_section_and_refs_extraction(temp_project):
     assert fallback_excerpt.startswith("## a")
 
 
-def test_context_manager_genre_profile_supports_legacy_claude_refs(temp_project):
-    refs_dir = temp_project.project_root / ".claude" / "references"
-    refs_dir.mkdir(parents=True, exist_ok=True)
-    (refs_dir / "genre-profiles.md").write_text("## xuanhuan\n- legacy profile", encoding="utf-8")
-    (refs_dir / "reading-power-taxonomy.md").write_text("## xuanhuan\n- legacy taxonomy", encoding="utf-8")
-
-    manager = ContextManager(temp_project)
-    profile = manager._load_genre_profile({"project": {"genre": "xuanhuan"}})
-
-    assert "legacy profile" in profile.get("profile_excerpt", "")
-    assert "legacy taxonomy" in profile.get("taxonomy_excerpt", "")
-
-
 def test_context_manager_reader_signal_with_debt_and_disable_switch(temp_project):
     manager = ContextManager(temp_project)
     manager.config.context_reader_signal_include_debt = True
